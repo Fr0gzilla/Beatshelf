@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { Howl } from "howler";
-import { supabase } from "@/lib/supabaseClient";
 
 // ===============================
 // Types
@@ -89,7 +88,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   // -------------------------------
   // Play a single track
   // -------------------------------
-  playTrack: async (track: Track) => {
+  playTrack: (track: Track) => {
     const oldHowl = get().howl;
     if (oldHowl) oldHowl.unload();
 
@@ -126,28 +125,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       }
     }, 500);
 
-    // ===============================
-    //     PHASE 15 — HISTORY
-    // ===============================
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      fetch("/api/history", {
-        method: "POST",
-        body: JSON.stringify({
-          user_id: user.id,
-          track_id: track.id,
-        }),
-      });
-    }
   },
 
   // -------------------------------
   // Play an entire playlist
   // -------------------------------
-  playPlaylist: async (list, index) => {
+  playPlaylist: (list, index) => {
     set({
       playlist: list,
       currentIndex: index,
