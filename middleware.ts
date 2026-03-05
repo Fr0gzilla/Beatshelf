@@ -1,24 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-
-  const supabase = createMiddlewareClient({ req, res });
-  await supabase.auth.getSession();
-
+export function middleware(req: NextRequest) {
   const protectedRoutes = ["/upload"];
 
   if (protectedRoutes.includes(req.nextUrl.pathname)) {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const token =
+      req.cookies.get("sb-access-token")?.value ||
+      req.cookies.get("sb-refresh-token")?.value;
 
-    if (!session) {
+    if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  return res;
+  return NextResponse.next();
 }

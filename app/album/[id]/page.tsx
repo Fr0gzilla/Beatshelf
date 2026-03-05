@@ -1,9 +1,12 @@
+"use client";
+
+import { use } from "react";
 import { albums } from "@/lib/data";
 import { TrackCard } from "@/components/music/TrackCard";
-import { usePlayerStore } from "@/store/playerStore";
 
-export default function AlbumPage({ params }: { params: { id: string } }) {
-  const album = albums.find((a) => a.id === params.id);
+export default function AlbumPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const album = albums.find((a) => a.id === id);
 
   if (!album) return <div className="p-6">Album not found</div>;
 

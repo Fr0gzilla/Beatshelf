@@ -2,16 +2,15 @@ import { supabase } from "@/lib/supabaseClient";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { user_id, track_id } = await req.json();
+  const formData = await req.formData();
+  const audio = formData.get("audio") as File | null;
+  const cover = formData.get("cover") as File | null;
+  const title = formData.get("title") as string;
+  const artist = formData.get("artist") as string;
 
-  const { error } = await supabase
-    .from("history")
-    .insert({ user_id, track_id });
-
-  if (error) return NextResponse.json({ error }, { status: 400 });
-
-  return NextResponse.json({ success: true });
-}
+  if (!audio || !cover || !title || !artist) {
+    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
 
   const audioName = `audio/${crypto.randomUUID()}-${audio.name}`;
   const coverName = `covers/${crypto.randomUUID()}-${cover.name}`;
@@ -31,7 +30,6 @@ export async function POST(req: Request) {
   const audioURL = supabase.storage.from("tracks").getPublicUrl(audioName);
   const coverURL = supabase.storage.from("tracks").getPublicUrl(coverName);
 
-  // INSERT into DB
   const { error: insertErr } = await supabase
     .from("tracks")
     .insert({

@@ -9,7 +9,9 @@ import {
   Shuffle,
   Repeat,
   Repeat1,
-  ArrowDown,
+  ChevronDown,
+  Volume2,
+  Music2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -37,8 +39,16 @@ export default function NowPlaying() {
 
   if (!currentTrack) {
     return (
-      <div className="h-screen flex items-center justify-center bg-zinc-900 text-zinc-500">
-        No track playing...
+      <div className="h-screen flex flex-col items-center justify-center text-zinc-600 gap-3">
+        <Music2 size={48} className="opacity-30" />
+        <p className="text-sm">No track playing</p>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="text-xs text-emerald-400 hover:underline mt-2"
+        >
+          Go back
+        </button>
       </div>
     );
   }
@@ -46,133 +56,158 @@ export default function NowPlaying() {
   const format = (sec: number) =>
     isNaN(sec)
       ? "0:00"
-      : `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(
-          2,
-          "0"
-        )}`;
+      : `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, "0")}`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="h-screen w-full bg-zinc-900 text-white flex flex-col p-6"
+      className="h-screen w-full flex flex-col items-center justify-center px-6 relative overflow-hidden"
     >
-      {/* Close button */}
-      <button
-        onClick={() => router.back()}
-        className="text-zinc-400 hover:text-white mb-4"
-      >
-        <ArrowDown size={28} />
-      </button>
-
-      {/* Cover animation */}
-      <motion.div
-        initial={{ scale: 0.85, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="flex justify-center mt-4"
-      >
-        <img
-          src={currentTrack.cover}
-          className="w-72 h-72 md:w-96 md:h-96 rounded-lg shadow-lg object-cover"
-        />
-      </motion.div>
-
-      {/* Infos */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="text-center mt-6"
-      >
-        <h1 className="text-3xl font-bold">{currentTrack.title}</h1>
-        <p className="text-zinc-400 mt-1">{currentTrack.artist}</p>
-      </motion.div>
-
-      {/* Controls */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="flex items-center justify-center gap-6 mt-8"
-      >
-        <button
-          onClick={toggleShuffle}
-          className={shuffle ? "text-white" : "text-zinc-400"}
-        >
-          <Shuffle size={26} />
-        </button>
-
-        <button onClick={prevTrack}>
-          <SkipBack size={34} className="text-zinc-300 hover:text-white" />
-        </button>
-
-        <button
-          onClick={togglePlay}
-          className="bg-white text-black p-4 rounded-full"
-        >
-          {isPlaying ? <Pause size={30} /> : <Play size={30} />}
-        </button>
-
-        <button onClick={nextTrack}>
-          <SkipForward size={34} className="text-zinc-300 hover:text-white" />
-        </button>
-
-        <button onClick={toggleRepeat}>
-          {repeat === "all" && <Repeat size={26} className="text-white" />}
-          {repeat === "one" && <Repeat1 size={26} className="text-white" />}
-          {repeat === "off" && <Repeat size={26} className="text-zinc-400" />}
-        </button>
-      </motion.div>
-
-      {/* Progress bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.45 }}
-        className="flex items-center gap-3 mt-8 px-4"
-      >
-        <span className="text-sm text-zinc-500 w-10">{format(currentTime)}</span>
-
+      {/* Background blur */}
+      {currentTrack.cover && (
         <div
-          className="flex-1 h-2 bg-zinc-700 rounded-full cursor-pointer"
-          onClick={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const ratio = (e.clientX - rect.left) / rect.width;
-            seek(ratio);
-          }}
+          className="absolute inset-0 bg-cover bg-center opacity-15 blur-3xl scale-110"
+          style={{ backgroundImage: `url(${currentTrack.cover})` }}
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/80 via-[#09090b]/60 to-[#09090b]" />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center max-w-md w-full">
+        {/* Close */}
+        <button
+          type="button"
+          title="Close"
+          onClick={() => router.back()}
+          className="self-start text-zinc-400 hover:text-white transition-colors mb-8"
+        >
+          <ChevronDown size={28} />
+        </button>
+
+        {/* Cover */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 bg-zinc-800"
+        >
+          {currentTrack.cover ? (
+            <img src={currentTrack.cover} alt={currentTrack.title} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Music2 size={64} className="text-zinc-700" />
+            </div>
+          )}
+        </motion.div>
+
+        {/* Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-center mt-8 w-full"
+        >
+          <h1 className="text-2xl md:text-3xl font-bold truncate">{currentTrack.title}</h1>
+          <p className="text-zinc-400 mt-1 text-sm">{currentTrack.artist}</p>
+        </motion.div>
+
+        {/* Progress */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="w-full mt-8"
         >
           <div
-            className="h-full bg-white rounded-full"
-            style={{ width: `${progress * 100}%` }}
+            className="w-full h-1.5 bg-white/10 rounded-full cursor-pointer group"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              seek((e.clientX - rect.left) / rect.width);
+            }}
+          >
+            <div
+              className="h-full bg-white rounded-full relative transition-all"
+              style={{ width: `${progress * 100}%` }}
+            >
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" />
+            </div>
+          </div>
+          <div className="flex justify-between mt-2">
+            <span className="text-[11px] text-zinc-500 tabular-nums">{format(currentTime)}</span>
+            <span className="text-[11px] text-zinc-500 tabular-nums">{format(duration)}</span>
+          </div>
+        </motion.div>
+
+        {/* Controls */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45 }}
+          className="flex items-center justify-center gap-8 mt-6"
+        >
+          <button
+            type="button"
+            title="Shuffle"
+            onClick={toggleShuffle}
+            className={`transition-colors ${shuffle ? "text-emerald-400" : "text-zinc-500 hover:text-white"}`}
+          >
+            <Shuffle size={20} />
+          </button>
+
+          <button type="button" title="Previous" onClick={prevTrack} className="text-zinc-300 hover:text-white transition-colors">
+            <SkipBack size={28} fill="currentColor" />
+          </button>
+
+          <button
+            type="button"
+            title={isPlaying ? "Pause" : "Play"}
+            onClick={togglePlay}
+            className="w-14 h-14 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform"
+          >
+            {isPlaying ? (
+              <Pause size={24} className="text-black" fill="black" />
+            ) : (
+              <Play size={24} className="text-black ml-1" fill="black" />
+            )}
+          </button>
+
+          <button type="button" title="Next" onClick={nextTrack} className="text-zinc-300 hover:text-white transition-colors">
+            <SkipForward size={28} fill="currentColor" />
+          </button>
+
+          <button
+            type="button"
+            title="Repeat"
+            onClick={toggleRepeat}
+            className={`transition-colors ${repeat !== "off" ? "text-emerald-400" : "text-zinc-500 hover:text-white"}`}
+          >
+            {repeat === "one" ? <Repeat1 size={20} /> : <Repeat size={20} />}
+          </button>
+        </motion.div>
+
+        {/* Volume */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex items-center gap-3 mt-8 w-48"
+        >
+          <Volume2 size={16} className="text-zinc-500 shrink-0" />
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={volume}
+            aria-label="Volume"
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            className="w-full accent-green"
+            style={{ "--val": `${volume * 100}%` } as React.CSSProperties}
           />
-        </div>
-
-        <span className="text-sm text-zinc-500 w-10 text-right">
-          {format(duration)}
-        </span>
-      </motion.div>
-
-      {/* Volume */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="flex items-center gap-3 mt-8 mx-auto w-64"
-      >
-        <span className="text-zinc-400">🔊</span>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
-          className="w-full accent-white"
-        />
-      </motion.div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }

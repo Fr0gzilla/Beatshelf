@@ -1,43 +1,55 @@
 "use client";
 
 import { usePlayerStore } from "@/store/playerStore";
+import { TrackCard } from "@/components/music/TrackCard";
+import { ListMusic, Trash2 } from "lucide-react";
 
 export default function QueuePage() {
   const queue = usePlayerStore((s) => s.queue);
   const clearQueue = usePlayerStore((s) => s.clearQueue);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Queue</h1>
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-blue-500/5 to-transparent" />
 
-      <button
-        onClick={clearQueue}
-        className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded text-white mb-6"
-      >
-        Clear Queue
-      </button>
-
-      {queue.length === 0 && (
-        <p className="text-zinc-400">Your queue is empty.</p>
-      )}
-
-      <div className="space-y-4">
-        {queue.map((track, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-4 bg-zinc-900 p-4 rounded-lg"
-          >
-            <img
-              src={track.cover}
-              className="w-14 h-14 rounded object-cover"
-            />
-
+        <div className="relative px-6 md:px-10 pt-10 pb-6">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="font-semibold">{track.title}</p>
-              <p className="text-sm text-zinc-400">{track.artist}</p>
+              <h1 className="text-3xl font-bold tracking-tight">Queue</h1>
+              <p className="text-sm text-zinc-500 mt-1">{queue.length} track{queue.length !== 1 ? "s" : ""}</p>
             </div>
+
+            {queue.length > 0 && (
+              <button
+                type="button"
+                onClick={clearQueue}
+                className="flex items-center gap-2 text-sm text-zinc-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-4 py-2 rounded-lg transition-all"
+              >
+                <Trash2 size={14} />
+                Clear
+              </button>
+            )}
           </div>
-        ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 md:px-10 py-4">
+        {queue.length === 0 ? (
+          <div className="text-center py-20 text-zinc-600">
+            <ListMusic size={48} className="mx-auto mb-4 opacity-30" />
+            <p className="text-sm">Your queue is empty</p>
+            <p className="text-xs text-zinc-700 mt-1">Add tracks from the home page</p>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {queue.map((track, i) => (
+              <TrackCard key={`${track.id}-${i}`} track={track} index={i + 1} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

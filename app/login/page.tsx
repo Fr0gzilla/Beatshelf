@@ -3,50 +3,75 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { Disc3 } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function login() {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
 
     if (error) {
       alert(error.message);
       return;
     }
-
     router.push("/");
   }
 
   return (
-    <div className="p-6 flex flex-col items-center justify-center h-screen bg-zinc-900 text-white">
-      <h1 className="text-3xl font-bold mb-8">Login</h1>
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/10 via-transparent to-transparent" />
 
-      <input
-        className="mb-4 p-3 bg-zinc-800 rounded w-80"
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div className="relative w-full max-w-sm">
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-2.5 mb-10">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+            <Disc3 size={22} className="text-black" />
+          </div>
+          <span className="text-2xl font-bold tracking-tight">Beatshelf</span>
+        </div>
 
-      <input
-        className="mb-4 p-3 bg-zinc-800 rounded w-80"
-        type="password"
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <h1 className="text-2xl font-bold text-center mb-8">Welcome back</h1>
 
-      <button
-        onClick={login}
-        className="px-6 py-3 bg-white text-black rounded font-bold"
-      >
-        Login
-      </button>
+        <div className="space-y-3">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-all"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-all"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={login}
+          disabled={loading}
+          className="w-full mt-6 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
+        >
+          {loading ? "Signing in..." : "Sign in"}
+        </button>
+
+        <p className="text-center text-sm text-zinc-500 mt-6">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="text-emerald-400 hover:underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

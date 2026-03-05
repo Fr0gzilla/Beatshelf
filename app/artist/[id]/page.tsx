@@ -1,8 +1,12 @@
+"use client";
+
+import { use } from "react";
 import { artists } from "@/lib/data";
 import { AlbumCard } from "@/components/music/AlbumCard";
 
-export default function ArtistPage({ params }: { params: { id: string } }) {
-  const artist = artists.find((a) => a.id === params.id);
+export default function ArtistPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const artist = artists.find((a) => a.id === id);
 
   if (!artist) return <div className="p-6">Artist not found</div>;
 

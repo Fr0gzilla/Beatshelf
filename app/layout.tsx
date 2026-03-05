@@ -14,10 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="bg-zinc-900 text-white flex">
+      <body className="flex h-screen overflow-hidden">
         <Sidebar />
 
-        <main className="flex-1 h-screen overflow-y-auto">
+        <main className="flex-1 overflow-y-auto pb-28 md:pb-24">
           {children}
         </main>
 

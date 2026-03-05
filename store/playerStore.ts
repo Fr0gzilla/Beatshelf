@@ -42,7 +42,9 @@ type PlayerState = {
   prevTrack: () => void;
 
   // Progress
+  currentTime: number;
   updateProgress: () => void;
+  seek: (ratio: number) => void;
 
   // Volume
   setVolume: (v: number) => void;
@@ -108,10 +110,21 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     set({
       currentTrack: track,
       howl: sound,
-      isPlaying: true
+      isPlaying: true,
+      currentTime: 0,
+      progress: 0,
     });
 
     sound.play();
+
+    // Auto-update progress
+    const interval = setInterval(() => {
+      if (get().howl === sound && get().isPlaying) {
+        get().updateProgress();
+      } else if (get().howl !== sound) {
+        clearInterval(interval);
+      }
+    }, 500);
 
     // ===============================
     //     PHASE 15 — HISTORY
@@ -218,6 +231,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     get().playPlaylist(playlist, prevIndex);
   },
 
+  // Progress
+  currentTime: 0,
+
   // -------------------------------
   // Update progress
   // -------------------------------
@@ -225,9 +241,28 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const sound = get().howl;
     if (!sound) return;
 
+    const dur = sound.duration();
+    const cur = sound.seek() as number;
     set({
-      progress: sound.seek(),
-      duration: sound.duration(),
+      currentTime: cur,
+      progress: dur > 0 ? cur / dur : 0,
+      duration: dur,
+    });
+  },
+
+  // -------------------------------
+  // Seek to ratio (0-1)
+  // -------------------------------
+  seek: (ratio: number) => {
+    const sound = get().howl;
+    if (!sound) return;
+
+    const dur = sound.duration();
+    const time = ratio * dur;
+    sound.seek(time);
+    set({
+      currentTime: time,
+      progress: ratio,
     });
   },
 

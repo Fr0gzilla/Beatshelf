@@ -1,8 +1,12 @@
+"use client";
+
+import { use } from "react";
 import { playlists } from "@/lib/data";
 import { TrackCard } from "@/components/music/TrackCard";
 
-export default function PlaylistPage({ params }: { params: { id: string } }) {
-  const playlist = playlists.find((p) => p.id === params.id);
+export default function PlaylistPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const playlist = playlists.find((p) => p.id === id);
 
   if (!playlist) return <div className="p-6">Playlist not found</div>;
 
