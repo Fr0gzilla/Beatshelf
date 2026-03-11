@@ -98,7 +98,7 @@ export default function ArtistPage({ params }: { params: Promise<{ id: string }>
           <div className="flex items-center gap-6">
             <div className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden shadow-2xl shadow-pink-900/20 shrink-0 bg-white/[0.04] ring-2 ring-pink-500/20">
               <Image src={artist.picture_big || artist.picture_medium} alt={artist.name}
-                width={176} height={176} className="w-full h-full object-cover" unoptimized />
+                width={176} height={176} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Artist</p>
@@ -137,7 +137,7 @@ export default function ArtistPage({ params }: { params: Promise<{ id: string }>
                 className="group bg-white/[0.03] hover:bg-white/[0.06] p-3 rounded-2xl transition-all border border-transparent hover:border-white/[0.06]">
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-white/[0.04] mb-3">
                   <Image src={album.cover_medium} alt={album.title}
-                    width={200} height={200} className="w-full h-full object-cover" unoptimized />
+                    width={200} height={200} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <div className="w-11 h-11 bg-gradient-to-br from-purple-500 to-orange-400 rounded-full flex items-center justify-center shadow-xl translate-y-3 group-hover:translate-y-0 transition-transform">
                       <Play size={17} className="text-white ml-0.5" fill="white" />

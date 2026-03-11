@@ -78,7 +78,7 @@ export default function PlaylistPage({ params }: { params: Promise<{ id: string 
           <div className="flex items-center gap-6">
             <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden shadow-2xl shadow-purple-900/20 shrink-0 bg-white/[0.04]">
               <Image src={playlist.picture_big || playlist.picture_medium} alt={playlist.title}
-                width={176} height={176} className="w-full h-full object-cover" unoptimized />
+                width={176} height={176} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Playlist</p>

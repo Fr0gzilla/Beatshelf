@@ -14,10 +14,20 @@
     border-color: rgba(255, 255, 255, 0.06);
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply text-zinc-100 antialiased;
     background: #0a0a0f;
     font-family: "Inter", system-ui, -apple-system, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* GPU-accelerate animated elements */
+  .eq-bar, .vinyl-spin {
+    will-change: transform;
   }
 
   ::-webkit-scrollbar { width: 5px; }

@@ -5,6 +5,7 @@ import { usePlayerStore } from "@/store/playerStore";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
 import { Mic2, Loader2, Play, X } from "lucide-react";
+import { ArtistSkeleton } from "@/components/ui/Skeleton";
 import { toast } from "@/components/ui/Toast";
 import Image from "next/image";
 
@@ -115,9 +116,7 @@ export default function ArtistsPage() {
       {/* Artist grid */}
       <div className="px-6 md:px-10 pb-12">
         {loading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 size={28} className="animate-spin text-pink-400" />
-          </div>
+          <ArtistSkeleton count={10} />
         ) : artists.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {artists.map((artist, i) => (
@@ -140,8 +139,7 @@ export default function ArtistsPage() {
                     alt={artist.name}
                     width={128} height={128}
                     className="w-full h-full object-cover"
-                    unoptimized
-                  />
+                                     />
                 </div>
                 <p className="text-sm font-semibold truncate">{artist.name}</p>
                 <p className="text-[11px] text-zinc-500 mt-1">{formatFans(artist.nb_fan)}</p>
@@ -164,6 +162,7 @@ export default function ArtistsPage() {
           <div className="relative bg-zinc-900 border border-white/[0.08] rounded-t-3xl sm:rounded-3xl w-full sm:max-w-lg max-h-[80vh] overflow-y-auto p-6">
             <button
               type="button"
+              title="Close"
               onClick={() => setSelectedArtist(null)}
               className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
             >
@@ -172,7 +171,7 @@ export default function ArtistsPage() {
 
             <div className="flex flex-col items-center mb-6">
               <div className="w-28 h-28 rounded-full overflow-hidden ring-2 ring-pink-500/30 mb-4">
-                <Image src={selectedArtist.picture_medium} alt={selectedArtist.name} width={112} height={112} className="w-full h-full object-cover" unoptimized />
+                <Image src={selectedArtist.picture_medium} alt={selectedArtist.name} width={112} height={112} className="w-full h-full object-cover" />
               </div>
               <h2 className="text-xl font-bold">{selectedArtist.name}</h2>
               <p className="text-sm text-zinc-500 mt-1">{formatFans(selectedArtist.nb_fan)}</p>
@@ -205,7 +204,7 @@ export default function ArtistsPage() {
                     className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-all text-left group"
                   >
                     <span className="text-[11px] text-zinc-600 w-5 text-right">{i + 1}</span>
-                    <Image src={track.cover || ""} alt={track.title} width={40} height={40} className="w-10 h-10 rounded-lg object-cover" unoptimized />
+                    <Image src={track.cover || ""} alt={track.title} width={40} height={40} className="w-10 h-10 rounded-lg object-cover" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{track.title}</p>
                       <p className="text-[11px] text-zinc-600 truncate">{track.artist}</p>

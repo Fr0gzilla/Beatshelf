@@ -53,7 +53,7 @@ export function Player() {
             <div className="flex items-center gap-3.5 w-[240px] min-w-0">
               <div className="w-11 h-11 rounded-xl overflow-hidden bg-white/[0.06] shrink-0 ring-1 ring-white/[0.08]">
                 {currentTrack.cover ? (
-                  <Image src={currentTrack.cover} alt={currentTrack.title} width={44} height={44} className="w-full h-full object-cover" unoptimized />
+                  <Image src={currentTrack.cover} alt={currentTrack.title} width={44} height={44} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center"><AudioLines size={16} className="text-zinc-600" /></div>
                 )}
@@ -123,7 +123,7 @@ export function Player() {
           <div className="md:hidden flex items-center gap-3 px-4 h-[64px]">
             <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/[0.06] shrink-0 ring-1 ring-white/[0.08]">
               {currentTrack.cover ? (
-                <Image src={currentTrack.cover} alt={currentTrack.title} width={40} height={40} className="w-full h-full object-cover" unoptimized />
+                <Image src={currentTrack.cover} alt={currentTrack.title} width={40} height={40} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center"><AudioLines size={14} className="text-zinc-600" /></div>
               )}

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, AudioLines, Loader2 } from "lucide-react";
 import { TrackCard } from "@/components/music/TrackCard";
+import { TrackSkeleton } from "@/components/ui/Skeleton";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
 
@@ -14,6 +15,7 @@ export default function SearchPage() {
   const [results, setResults] = useState<Track[]>([]);
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -23,18 +25,21 @@ export default function SearchPage() {
 
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
       setLoading(true);
       try {
-        const res = await fetch(`/api/deezer?path=/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/deezer?path=/search?q=${encodeURIComponent(query)}`, { signal: controller.signal });
         const data = await res.json();
         if (data.data) {
           setResults(data.data.map((t: DeezerTrack) => deezerToTrack(t)));
         }
-      } catch {
-        setResults([]);
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") setResults([]);
       }
       setLoading(false);
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(debounceRef.current);
   }, [query]);
@@ -63,9 +68,7 @@ export default function SearchPage() {
 
       <div className="px-6 md:px-10 py-4">
         {loading && (
-          <div className="flex justify-center py-12">
-            <Loader2 size={24} className="animate-spin text-purple-400" />
-          </div>
+          <TrackSkeleton count={8} />
         )}
 
         {!loading && results.length > 0 && (

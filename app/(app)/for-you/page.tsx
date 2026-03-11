@@ -6,7 +6,8 @@ import { usePlayerStore } from "@/store/playerStore";
 import { TrackCard } from "@/components/music/TrackCard";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
-import { Sparkles, Play, Loader2, Music } from "lucide-react";
+import { Sparkles, Play, Music } from "lucide-react";
+import { TrackSkeleton } from "@/components/ui/Skeleton";
 import { toast } from "@/components/ui/Toast";
 
 export default function ForYouPage() {
@@ -82,9 +83,7 @@ export default function ForYouPage() {
 
       <div className="px-6 md:px-10 pb-12">
         {loading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 size={28} className="animate-spin text-purple-400" />
-          </div>
+          <TrackSkeleton count={12} />
         ) : tracks.length > 0 ? (
           <div className="space-y-1">
             {tracks.map((track, i) => (

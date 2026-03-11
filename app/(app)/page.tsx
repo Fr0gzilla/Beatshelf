@@ -5,7 +5,8 @@ import { usePlayerStore } from "@/store/playerStore";
 import { TrackCard } from "@/components/music/TrackCard";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
-import { Play, AudioLines, Headphones, Mic2, Flame, Loader2 } from "lucide-react";
+import { Play, AudioLines, Headphones, Mic2, Flame } from "lucide-react";
+import { TrackSkeleton } from "@/components/ui/Skeleton";
 import Link from "next/link";
 import { toast } from "@/components/ui/Toast";
 
@@ -90,9 +91,7 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 size={28} className="animate-spin text-purple-400" />
-          </div>
+          <TrackSkeleton count={10} />
         ) : tracks.length > 0 ? (
           <div className="space-y-1">
             {tracks.map((track, i) => (

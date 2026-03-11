@@ -74,7 +74,7 @@ export function TrackCard({ track, index }: { track: any; index?: number }) {
       {/* Cover */}
       <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/[0.05] shrink-0 ring-1 ring-white/[0.06] relative">
         {track.cover ? (
-          <Image src={track.cover} alt={track.title} width={40} height={40} className="w-full h-full object-cover" unoptimized />
+          <Image src={track.cover} alt={track.title} width={40} height={40} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <AudioLines size={14} className="text-zinc-700" />
