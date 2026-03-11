@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { AudioLines, Mail, Lock, ArrowRight, User, Sparkles } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export function AuthForm() {
   const router = useRouter();
@@ -19,29 +20,38 @@ export function AuthForm() {
     setError("");
     setLoading(true);
 
-    // Local auth: store users in localStorage
-    const stored = JSON.parse(localStorage.getItem("beatshelf_users") || "[]");
+    try {
+      if (mode === "register") {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { display_name: name || email.split("@")[0] },
+          },
+        });
+        if (signUpError) {
+          setError(signUpError.message);
+          setLoading(false);
+          return;
+        }
+      } else {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) {
+          setError(signInError.message);
+          setLoading(false);
+          return;
+        }
+      }
 
-    if (mode === "register") {
-      if (stored.find((u: any) => u.email === email)) {
-        setLoading(false);
-        setError("An account with this email already exists.");
-        return;
-      }
-      stored.push({ email, password, name: name || email.split("@")[0] });
-      localStorage.setItem("beatshelf_users", JSON.stringify(stored));
-    } else {
-      const user = stored.find((u: any) => u.email === email && u.password === password);
-      if (!user) {
-        setLoading(false);
-        setError("Invalid email or password.");
-        return;
-      }
+      setLoading(false);
+      router.push("/");
+    } catch {
+      setError("An unexpected error occurred.");
+      setLoading(false);
     }
-
-    localStorage.setItem("beatshelf_session", JSON.stringify({ email, name: name || email.split("@")[0] }));
-    setLoading(false);
-    router.push("/");
   }
 
   return (

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // Simple audio visualizer bars
 function Visualizer({ isPlaying }: { isPlaying: boolean }) {
@@ -144,7 +145,7 @@ export default function NowPlaying() {
               className="relative">
               <div className="w-60 h-60 md:w-72 md:h-72 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/30 ring-1 ring-white/10 bg-zinc-900">
                 {currentTrack.cover ? (
-                  <img src={currentTrack.cover} alt={currentTrack.title} className="w-full h-full object-cover" />
+                  <Image src={currentTrack.cover} alt={currentTrack.title} width={288} height={288} className="w-full h-full object-cover" unoptimized />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <AudioLines size={56} className="text-zinc-800" />

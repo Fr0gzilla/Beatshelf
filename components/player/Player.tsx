@@ -8,6 +8,7 @@ import {
   Repeat, Repeat1, Volume2, Maximize2, AudioLines, ListMusic,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Player() {
   const {
@@ -37,7 +38,9 @@ export function Player() {
       <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-3 md:pb-4 px-3 md:px-6 pointer-events-none">
         <div className="pointer-events-auto w-full max-w-4xl bg-[#13131a]/80 backdrop-blur-2xl border border-white/[0.07] rounded-2xl shadow-2xl shadow-purple-900/10 overflow-hidden">
           {/* Progress top */}
-          <div className="h-[3px] bg-white/[0.06] cursor-pointer group"
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+          <div className="h-[3px] bg-white/[0.06] cursor-pointer group" role="progressbar" aria-label="Track progress"
+            aria-valuenow={Math.round(progress * 100)} aria-valuemin={0} aria-valuemax={100}
             onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); seek((e.clientX - r.left) / r.width); }}>
             <div className="h-full bg-gradient-to-r from-purple-500 to-orange-400 relative transition-all duration-100"
               style={{ width: `${progress * 100}%` }}>
@@ -50,7 +53,7 @@ export function Player() {
             <div className="flex items-center gap-3.5 w-[240px] min-w-0">
               <div className="w-11 h-11 rounded-xl overflow-hidden bg-white/[0.06] shrink-0 ring-1 ring-white/[0.08]">
                 {currentTrack.cover ? (
-                  <img src={currentTrack.cover} alt={currentTrack.title} className="w-full h-full object-cover" />
+                  <Image src={currentTrack.cover} alt={currentTrack.title} width={44} height={44} className="w-full h-full object-cover" unoptimized />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center"><AudioLines size={16} className="text-zinc-600" /></div>
                 )}
@@ -120,7 +123,7 @@ export function Player() {
           <div className="md:hidden flex items-center gap-3 px-4 h-[64px]">
             <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/[0.06] shrink-0 ring-1 ring-white/[0.08]">
               {currentTrack.cover ? (
-                <img src={currentTrack.cover} alt={currentTrack.title} className="w-full h-full object-cover" />
+                <Image src={currentTrack.cover} alt={currentTrack.title} width={40} height={40} className="w-full h-full object-cover" unoptimized />
               ) : (
                 <div className="w-full h-full flex items-center justify-center"><AudioLines size={14} className="text-zinc-600" /></div>
               )}

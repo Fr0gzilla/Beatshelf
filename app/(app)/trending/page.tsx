@@ -6,6 +6,7 @@ import { TrackCard } from "@/components/music/TrackCard";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
 import { Flame, Play, Loader2, Globe, MapPin, Music } from "lucide-react";
+import { toast } from "@/components/ui/Toast";
 
 const tabs = [
   { label: "Top Global", icon: Globe, color: "from-purple-500 to-pink-500", query: null },
@@ -42,7 +43,7 @@ export default function TrendingPage() {
           setTracks(data.data.map((t: DeezerTrack) => deezerToTrack(t)));
         }
       })
-      .catch(() => {})
+      .catch(() => { toast("Failed to load tracks", "error"); })
       .finally(() => setLoading(false));
   }, [activeTab]);
 

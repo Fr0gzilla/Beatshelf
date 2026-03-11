@@ -30,7 +30,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop */}
-      <aside className="hidden md:flex flex-col w-[220px] h-screen shrink-0 relative z-10">
+      <aside className="hidden md:flex flex-col w-[220px] h-screen shrink-0 relative z-10" aria-label="Main navigation">
         <div className="flex flex-col h-full bg-white/[0.02] backdrop-blur-sm border-r border-white/[0.04]">
           <div className="flex items-center gap-2.5 px-5 pt-7 pb-5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-orange-400 flex items-center justify-center shadow-lg shadow-purple-500/20">
@@ -50,6 +50,7 @@ export function Sidebar() {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search music"
                 className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl pl-9 pr-3 py-2 text-[12px] placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/30 transition-all"
               />
             </div>
@@ -105,7 +106,7 @@ export function Sidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-[72px] left-0 right-0 z-40 bg-[#0a0a0f]/90 backdrop-blur-2xl border-t border-white/[0.04]">
+      <nav className="md:hidden fixed bottom-[72px] left-0 right-0 z-40 bg-[#0a0a0f]/90 backdrop-blur-2xl border-t border-white/[0.04]" aria-label="Mobile navigation">
         <div className="flex items-center justify-around py-2.5">
           {[
             { name: "Home", href: "/", icon: Home },

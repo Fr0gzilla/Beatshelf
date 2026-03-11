@@ -5,6 +5,8 @@ import { usePlayerStore } from "@/store/playerStore";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
 import { Mic2, Loader2, Play, X } from "lucide-react";
+import { toast } from "@/components/ui/Toast";
+import Image from "next/image";
 
 type DeezerArtist = {
   id: number;
@@ -56,7 +58,7 @@ export default function ArtistsPage() {
           setArtists(data.data);
         }
       })
-      .catch(() => {})
+      .catch(() => { toast("Failed to load artists", "error"); })
       .finally(() => setLoading(false));
   }, [activeTab]);
 
@@ -72,7 +74,7 @@ export default function ArtistsPage() {
           setTopTracks(data.data.map((t: DeezerTrack) => deezerToTrack(t)));
         }
       })
-      .catch(() => {})
+      .catch(() => { toast("Failed to load artists", "error"); })
       .finally(() => setLoadingTracks(false));
   };
 
@@ -123,7 +125,7 @@ export default function ArtistsPage() {
                 key={artist.id}
                 type="button"
                 onClick={() => openArtist(artist)}
-                className="group relative bg-white/[0.03] hover:bg-white/[0.06] p-5 pt-6 rounded-2xl cursor-pointer transition-all text-center border border-transparent hover:border-white/[0.08] hover:shadow-xl hover:shadow-pink-500/5 hover:-translate-y-1"
+                className="group relative bg-white/[0.03] hover:bg-white/[0.06] p-5 pt-6 rounded-2xl cursor-pointer text-center border border-transparent hover:border-white/[0.08] hover:shadow-xl hover:shadow-pink-500/5 transition-[background,border,box-shadow] duration-200"
               >
                 {/* Rank badge for top 10 */}
                 {i < 10 && (
@@ -132,11 +134,13 @@ export default function ArtistsPage() {
                   </span>
                 )}
 
-                <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden bg-white/[0.04] mx-auto mb-4 ring-2 ring-pink-500/10 group-hover:ring-pink-500/40 group-hover:ring-4 transition-all shadow-lg shadow-black/20">
-                  <img
+                <div className="aspect-square w-28 md:w-32 rounded-full overflow-hidden bg-white/[0.04] mx-auto mb-4 ring-2 ring-pink-500/10 group-hover:ring-pink-500/40 group-hover:ring-4 transition-[ring] duration-200 shadow-lg shadow-black/20">
+                  <Image
                     src={artist.picture_medium}
                     alt={artist.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={128} height={128}
+                    className="w-full h-full object-cover"
+                    unoptimized
                   />
                 </div>
                 <p className="text-sm font-semibold truncate">{artist.name}</p>
@@ -168,7 +172,7 @@ export default function ArtistsPage() {
 
             <div className="flex flex-col items-center mb-6">
               <div className="w-28 h-28 rounded-full overflow-hidden ring-2 ring-pink-500/30 mb-4">
-                <img src={selectedArtist.picture_medium} alt={selectedArtist.name} className="w-full h-full object-cover" />
+                <Image src={selectedArtist.picture_medium} alt={selectedArtist.name} width={112} height={112} className="w-full h-full object-cover" unoptimized />
               </div>
               <h2 className="text-xl font-bold">{selectedArtist.name}</h2>
               <p className="text-sm text-zinc-500 mt-1">{formatFans(selectedArtist.nb_fan)}</p>
@@ -201,7 +205,7 @@ export default function ArtistsPage() {
                     className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-all text-left group"
                   >
                     <span className="text-[11px] text-zinc-600 w-5 text-right">{i + 1}</span>
-                    <img src={track.cover} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                    <Image src={track.cover || ""} alt={track.title} width={40} height={40} className="w-10 h-10 rounded-lg object-cover" unoptimized />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{track.title}</p>
                       <p className="text-[11px] text-zinc-600 truncate">{track.artist}</p>

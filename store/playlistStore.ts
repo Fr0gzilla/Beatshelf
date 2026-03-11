@@ -1,5 +1,11 @@
 import { create } from "zustand";
 import type { Track } from "@/store/playerStore";
+import {
+  fetchPlaylists,
+  createPlaylistDB,
+  deletePlaylistDB,
+  updatePlaylistTracksDB,
+} from "@/lib/supabaseData";
 
 export type UserPlaylist = {
   id: string;
@@ -43,6 +49,7 @@ type PlaylistState = {
   deletePlaylist: (id: string) => void;
   addToPlaylist: (playlistId: string, track: Track) => void;
   removeFromPlaylist: (playlistId: string, trackId: string) => void;
+  syncFromSupabase: () => Promise<void>;
 };
 
 function load(): UserPlaylist[] {
@@ -62,21 +69,29 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
   playlists: load(),
 
   createPlaylist: (name, emoji) => {
-    const pl: UserPlaylist = {
-      id: Date.now().toString(),
-      name,
-      emoji,
-      tracks: [],
-    };
+    const tempId = Date.now().toString();
+    const pl: UserPlaylist = { id: tempId, name, emoji, tracks: [] };
     const updated = [...get().playlists, pl];
     save(updated);
     set({ playlists: updated });
+
+    // Sync to Supabase and update with real ID
+    createPlaylistDB(name, emoji).then((realId) => {
+      if (realId) {
+        const current = get().playlists.map((p) =>
+          p.id === tempId ? { ...p, id: realId } : p
+        );
+        save(current);
+        set({ playlists: current });
+      }
+    }).catch(() => {});
   },
 
   deletePlaylist: (id) => {
     const updated = get().playlists.filter((p) => p.id !== id);
     save(updated);
     set({ playlists: updated });
+    deletePlaylistDB(id).catch(() => {});
   },
 
   addToPlaylist: (playlistId, track) => {
@@ -87,6 +102,9 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
     });
     save(updated);
     set({ playlists: updated });
+
+    const pl = updated.find((p) => p.id === playlistId);
+    if (pl) updatePlaylistTracksDB(playlistId, pl.tracks).catch(() => {});
   },
 
   removeFromPlaylist: (playlistId, trackId) => {
@@ -96,5 +114,20 @@ export const usePlaylistStore = create<PlaylistState>((set, get) => ({
     });
     save(updated);
     set({ playlists: updated });
+
+    const pl = updated.find((p) => p.id === playlistId);
+    if (pl) updatePlaylistTracksDB(playlistId, pl.tracks).catch(() => {});
+  },
+
+  syncFromSupabase: async () => {
+    try {
+      const playlists = await fetchPlaylists();
+      if (playlists.length > 0) {
+        save(playlists);
+        set({ playlists });
+      }
+    } catch {
+      // Keep localStorage data as fallback
+    }
   },
 }));

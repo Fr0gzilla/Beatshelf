@@ -1,10 +1,12 @@
 import { create } from "zustand";
 import type { Track } from "@/store/playerStore";
+import { fetchLikes, addLike, removeLike } from "@/lib/supabaseData";
 
 type LikesState = {
   liked: Track[];
   isLiked: (id: string) => boolean;
   toggleLike: (track: Track) => void;
+  syncFromSupabase: () => Promise<void>;
 };
 
 function loadLiked(): Track[] {
@@ -33,5 +35,24 @@ export const useLikesStore = create<LikesState>((set, get) => ({
       : [track, ...current];
     saveLiked(updated);
     set({ liked: updated });
+
+    // Sync to Supabase in background
+    if (exists) {
+      removeLike(track.id).catch(() => {});
+    } else {
+      addLike(track).catch(() => {});
+    }
+  },
+
+  syncFromSupabase: async () => {
+    try {
+      const likes = await fetchLikes();
+      if (likes.length > 0) {
+        saveLiked(likes);
+        set({ liked: likes });
+      }
+    } catch {
+      // Keep localStorage data as fallback
+    }
   },
 }));

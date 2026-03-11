@@ -7,6 +7,7 @@ import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
 import { Play, AudioLines, Headphones, Mic2, Flame, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "@/components/ui/Toast";
 
 export default function Home() {
   const playPlaylist = usePlayerStore((s) => s.playPlaylist);
@@ -21,7 +22,7 @@ export default function Home() {
           setTracks(data.data.map((t: DeezerTrack) => deezerToTrack(t)));
         }
       })
-      .catch(() => {})
+      .catch(() => { toast("Failed to load trending tracks", "error"); })
       .finally(() => setLoading(false));
   }, []);
 

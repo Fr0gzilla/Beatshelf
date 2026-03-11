@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Play, Plus, Heart, AudioLines, ListPlus, Share2 } from "lucide-react";
+import Image from "next/image";
 import { usePlayerStore } from "@/store/playerStore";
 import { useLikesStore } from "@/store/likesStore";
 import { usePlaylistStore } from "@/store/playlistStore";
@@ -71,9 +72,9 @@ export function TrackCard({ track, index }: { track: any; index?: number }) {
       </div>
 
       {/* Cover */}
-      <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/[0.05] shrink-0 ring-1 ring-white/[0.06]">
+      <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/[0.05] shrink-0 ring-1 ring-white/[0.06] relative">
         {track.cover ? (
-          <img src={track.cover} alt={track.title} className="w-full h-full object-cover" />
+          <Image src={track.cover} alt={track.title} width={40} height={40} className="w-full h-full object-cover" unoptimized />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <AudioLines size={14} className="text-zinc-700" />

@@ -54,6 +54,7 @@ export default function SearchPage() {
               placeholder="Tracks, artists, albums..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              aria-label="Search tracks, artists, albums"
               className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl pl-11 pr-4 py-3.5 text-sm placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/40 focus:bg-white/[0.06] transition-all"
             />
           </div>

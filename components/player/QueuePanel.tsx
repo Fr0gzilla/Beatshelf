@@ -3,6 +3,7 @@
 import { usePlayerStore } from "@/store/playerStore";
 import { X, ListMusic, Trash2, Play, AudioLines } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export function QueuePanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const queue = usePlayerStore((s) => s.queue);
@@ -46,7 +47,7 @@ export function QueuePanel({ open, onClose }: { open: boolean; onClose: () => vo
                   <div className="flex items-center gap-3 p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20">
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/[0.05] shrink-0">
                       {currentTrack.cover ? (
-                        <img src={currentTrack.cover} className="w-full h-full object-cover" />
+                        <Image src={currentTrack.cover} alt={currentTrack.title} width={40} height={40} className="w-full h-full object-cover" unoptimized />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><AudioLines size={14} className="text-zinc-700" /></div>
                       )}
@@ -72,7 +73,7 @@ export function QueuePanel({ open, onClose }: { open: boolean; onClose: () => vo
                     {queue.map((track, i) => (
                       <div key={`q-${track.id}-${i}`} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.03] transition-colors">
                         <div className="w-9 h-9 rounded-lg overflow-hidden bg-white/[0.05] shrink-0">
-                          {track.cover ? <img src={track.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><AudioLines size={12} className="text-zinc-700" /></div>}
+                          {track.cover ? <Image src={track.cover} alt={track.title} width={36} height={36} className="w-full h-full object-cover" unoptimized /> : <div className="w-full h-full flex items-center justify-center"><AudioLines size={12} className="text-zinc-700" /></div>}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[13px] font-medium truncate">{track.title}</p>
@@ -98,7 +99,7 @@ export function QueuePanel({ open, onClose }: { open: boolean; onClose: () => vo
                       >
                         <span className="text-[11px] text-zinc-700 w-4 text-right">{i + 1}</span>
                         <div className="w-9 h-9 rounded-lg overflow-hidden bg-white/[0.05] shrink-0">
-                          {track.cover ? <img src={track.cover} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><AudioLines size={12} className="text-zinc-700" /></div>}
+                          {track.cover ? <Image src={track.cover} alt={track.title} width={36} height={36} className="w-full h-full object-cover" unoptimized /> : <div className="w-full h-full flex items-center justify-center"><AudioLines size={12} className="text-zinc-700" /></div>}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[13px] font-medium truncate">{track.title}</p>

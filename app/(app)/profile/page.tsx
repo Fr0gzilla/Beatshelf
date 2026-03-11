@@ -12,7 +12,8 @@ export default function ProfilePage() {
   const playlistCount = usePlaylistStore((s) => s.playlists.length);
   const historyCount = useHistoryStore((s) => s.history.length);
 
-  const initial = user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "?";
+  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="min-h-screen">
@@ -23,7 +24,7 @@ export default function ProfilePage() {
           <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-orange-400 flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-purple-500/20 mb-4">
             {initial}
           </div>
-          <h1 className="text-2xl font-bold">{user?.name || "User"}</h1>
+          <h1 className="text-2xl font-bold">{displayName}</h1>
           <p className="text-sm text-zinc-500 mt-1">{user?.email}</p>
         </div>
       </div>

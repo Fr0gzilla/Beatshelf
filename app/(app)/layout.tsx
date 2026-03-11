@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { usePlayerStore } from "@/store/playerStore";
 import { useHistoryStore } from "@/store/historyStore";
+import { useLikesStore } from "@/store/likesStore";
+import { usePlaylistStore } from "@/store/playlistStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
@@ -24,10 +26,31 @@ function HistoryTracker() {
   return null;
 }
 
+function SupabaseSync() {
+  const syncLikes = useLikesStore((s) => s.syncFromSupabase);
+  const syncPlaylists = usePlaylistStore((s) => s.syncFromSupabase);
+  const syncHistory = useHistoryStore((s) => s.syncFromSupabase);
+
+  useEffect(() => {
+    syncLikes();
+    syncPlaylists();
+    syncHistory();
+  }, [syncLikes, syncPlaylists, syncHistory]);
+
+  return null;
+}
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
   useKeyboardShortcuts();
+
+  // Register service worker
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
 
   if (loading || !user) {
     return (
@@ -64,6 +87,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Player />
       <ToastContainer />
       <HistoryTracker />
+      <SupabaseSync />
     </div>
   );
 }

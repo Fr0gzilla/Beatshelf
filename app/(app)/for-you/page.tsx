@@ -7,6 +7,7 @@ import { TrackCard } from "@/components/music/TrackCard";
 import { deezerToTrack, DeezerTrack } from "@/lib/deezer";
 import type { Track } from "@/store/playerStore";
 import { Sparkles, Play, Loader2, Music } from "lucide-react";
+import { toast } from "@/components/ui/Toast";
 
 export default function ForYouPage() {
   const liked = useLikesStore((s) => s.liked);
@@ -25,7 +26,7 @@ export default function ForYouPage() {
         .then((data) => {
           if (data.data) setTracks(data.data.map((t: DeezerTrack) => deezerToTrack(t)));
         })
-        .catch(() => {})
+        .catch(() => { toast("Failed to load recommendations", "error"); })
         .finally(() => setLoading(false));
       return;
     }
