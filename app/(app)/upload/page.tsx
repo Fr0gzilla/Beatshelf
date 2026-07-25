@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Upload, Music, Image, CheckCircle, AudioLines } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function UploadPage() {
   const [audio, setAudio] = useState<File | null>(null);
@@ -13,12 +14,26 @@ export default function UploadPage() {
   async function upload() {
     if (!audio || !cover) return alert("Missing files");
     setLoading(true);
+
+    // Send the current session token so the API can authenticate the user.
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      setLoading(false);
+      return alert("You must be logged in to upload.");
+    }
+
     const form = new FormData();
     form.append("audio", audio);
     form.append("cover", cover);
     form.append("title", title);
     form.append("artist", artist);
-    const res = await fetch("/api/upload", { method: "POST", body: form });
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${session.access_token}` },
+      body: form,
+    });
     const data = await res.json();
     setLoading(false);
     if (data.error) alert(data.error);

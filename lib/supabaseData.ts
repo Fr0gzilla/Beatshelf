@@ -74,11 +74,20 @@ export async function createPlaylistDB(name: string, emoji: string): Promise<str
 }
 
 export async function deletePlaylistDB(playlistId: string) {
-  await supabase.from("playlists").delete().eq("id", playlistId);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  // Filter by user_id too (defence in depth) — RLS must also enforce ownership.
+  await supabase.from("playlists").delete().eq("id", playlistId).eq("user_id", user.id);
 }
 
 export async function updatePlaylistTracksDB(playlistId: string, tracks: Track[]) {
-  await supabase.from("playlists").update({ tracks }).eq("id", playlistId);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase
+    .from("playlists")
+    .update({ tracks })
+    .eq("id", playlistId)
+    .eq("user_id", user.id);
 }
 
 // ============================

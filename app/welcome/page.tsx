@@ -4,11 +4,12 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { IntroAnimation } from "@/components/intro/IntroAnimation";
 import { AuthForm } from "@/components/auth/AuthForm";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export default function WelcomePage() {
   const router = useRouter();
   const [showIntro, setShowIntro] = useState(true);
+  const prefersReduced = useReducedMotion();
 
   // If already logged in, skip to home
   useEffect(() => {
@@ -28,17 +29,17 @@ export default function WelcomePage() {
       <div className="fixed inset-0 pointer-events-none">
         <motion.div
           className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/[0.08] rounded-full blur-[150px]"
-          animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], y: [0, -20, 0] }}
+          animate={prefersReduced ? undefined : { scale: [1, 1.2, 1], x: [0, 30, 0], y: [0, -20, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px]"
-          animate={{ scale: [1, 1.15, 1], x: [0, -25, 0], y: [0, 20, 0] }}
+          animate={prefersReduced ? undefined : { scale: [1, 1.15, 1], x: [0, -25, 0], y: [0, 20, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute top-[40%] left-[60%] w-[300px] h-[300px] bg-pink-500/[0.04] rounded-full blur-[120px]"
-          animate={{ scale: [1, 1.3, 1] }}
+          animate={prefersReduced ? undefined : { scale: [1, 1.3, 1] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
@@ -67,11 +68,11 @@ export default function WelcomePage() {
               top: `${p.top}%`,
               background: i % 3 === 0 ? "#a855f7" : i % 3 === 1 ? "#f97316" : "#ec4899",
             }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.5, 1],
-            }}
+            animate={
+              prefersReduced
+                ? { opacity: 0.3 }
+                : { y: [0, -30, 0], opacity: [0.2, 0.6, 0.2], scale: [1, 1.5, 1] }
+            }
             transition={{
               duration: p.dur,
               delay: p.del,

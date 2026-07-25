@@ -1,18 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { AudioLines } from "lucide-react";
 
 export function IntroAnimation({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState<"bars" | "logo" | "explode">("bars");
+  const prefersReduced = useReducedMotion();
 
   useEffect(() => {
+    // Accessibility: skip the animated intro for users who prefer reduced motion.
+    if (prefersReduced) {
+      onComplete();
+      return;
+    }
     const t1 = setTimeout(() => setPhase("logo"), 1800);
     const t2 = setTimeout(() => setPhase("explode"), 3600);
     const t3 = setTimeout(() => onComplete(), 4600);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [onComplete]);
+  }, [onComplete, prefersReduced]);
 
   return (
     <AnimatePresence>
